@@ -8,19 +8,19 @@ libperfjava will generate a `/tmp/perf-<pid>.map` file for Java JITted methods t
 
 ## Build
 
-   cmake .
-   make
+	cmake .
+	make
 
 ## Usage
 
 libperfjava will record JITed methods during the lifetime of the JVM with
 
-   perf record -F 99 -g java -agentpath:/path/to/libperfjava.so -XX:+PreserveFramePointer ...
+	perf record -F 99 -g java -agentpath:/path/to/libperfjava.so -XX:+PreserveFramePointer ...
 
 Then the information can be turned into a flame graph using
 
-   perf script | /path/to/FlameGraph/stackcollapse-perf.pl > /tmp/out.perf-folded
-   /path/to/FlameGraph/flamegraph.pl --color=java /tmp/out.perf-folded > perfjava.svg
+	perf script | /path/to/FlameGraph/stackcollapse-perf.pl > /tmp/out.perf-folded
+	/path/to/FlameGraph/flamegraph.pl --color=java /tmp/out.perf-folded > perfjava.svg
 
 The result `perfjava.svg` can be viewed with any SVG viewer, like Firefox.
 
