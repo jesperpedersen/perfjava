@@ -55,9 +55,9 @@ signature_string_f(jvmtiEnv *jvmti, jmethodID method, char *output, size_t noutp
    (*jvmti)->GetClassSignature(jvmti, class, &csig, NULL);
 
    if (annotation)
-      snprintf(output, noutput, "%s:.%s%s", csig, name, annotation);
+      snprintf(output, noutput, "%s.%s%s", csig, name, annotation);
    else
-      snprintf(output, noutput, "%s:.%s", csig, name);
+      snprintf(output, noutput, "%s.%s", csig, name);
 
    (*jvmti)->Deallocate(jvmti, name);
    (*jvmti)->Deallocate(jvmti, msig);
