@@ -55,9 +55,9 @@ signature_string_f(jvmtiEnv *jvmti, jmethodID method, char *output, size_t noutp
    (*jvmti)->GetClassSignature(jvmti, class, &csig, NULL);
 
    if (annotation)
-      snprintf(output, noutput, "%s.%s%s%s", csig, name, msig, annotation);
+      snprintf(output, noutput, "%s:.%s%s", csig, name, annotation);
    else
-      snprintf(output, noutput, "%s.%s%s", csig, name, msig);
+      snprintf(output, noutput, "%s:.%s", csig, name);
 
    (*jvmti)->Deallocate(jvmti, name);
    (*jvmti)->Deallocate(jvmti, msig);
@@ -80,7 +80,7 @@ static void
 write_unfolded_entry(jvmtiEnv *jvmti, PCStackInfo *info, jmethodID root_method,
                      const char *root_name, const void *start_addr, const void *end_addr)
 {
-   char inlined_name[BUFFER_SIZE * 2 + 4];
+   char inlined_name[BUFFER_SIZE];
    const char *entry_p;
 
    if (unfold)
@@ -94,7 +94,7 @@ write_unfolded_entry(jvmtiEnv *jvmti, PCStackInfo *info, jmethodID root_method,
          signature_string_f(jvmti, info->methods[i], inlined_name, sizeof(inlined_name), frame_annotation(i != first_frame));
          strncat(full_name, inlined_name, sizeof(full_name) - 1 - strlen(full_name));
          if (i != 0)
-            strncat(full_name, ";", sizeof(full_name) - 1 - strlen(full_name));
+            strncat(full_name, "->", sizeof(full_name) - 1 - strlen(full_name));
       }
       entry_p = full_name;
    }
