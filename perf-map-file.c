@@ -2,7 +2,7 @@
  * libperfjava: JVM agent to create a perf-<pid>.map file for consumption
  *              using the Linux perf tools
  *
- * Copyright (C) 2015 Jesper Pedersen <jesper.pedersen@comcast.net>
+ * Copyright (C) 2018 Jesper Pedersen <jesper.pedersen@comcast.net>
  *
  * Based on http://github.com/jrudolph/perf-map-agent
  * Copyright (C) 2013 Johannes Rudolph <johannes.rudolph@gmail.com>
@@ -24,11 +24,14 @@
 
 #include <sys/types.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include <error.h>
 #include <errno.h>
 
 #include "perf-map-file.h"
+
+char* buffer;
 
 FILE*
 perf_map_open(pid_t pid)
@@ -41,6 +44,10 @@ perf_map_open(pid_t pid)
    if (!res)
       error(0, errno, "Couldn't open %s.", filename);
 
+   if (!buffer)
+      buffer = (char *)malloc(8192 * sizeof(char));
+   setbuf(res, buffer);
+
    return res;
 }
 
@@ -48,14 +55,25 @@ int
 perf_map_close(FILE *file)
 {
    if (file)
+   {
+      fflush(file);
+
+      free(buffer);
+      buffer = NULL;
       return fclose(file);
+   }
    else
       return 0;
 }
 
 void
-perf_map_write_entry(FILE* file, const void* code_addr, unsigned int code_size, const char* entry)
+perf_map_write_entry(FILE* file, const void* code_addr, unsigned int code_size, const char* entry, int flush)
 {
    if (file)
+   {
       fprintf(file, "%lx %x %s\n", (unsigned long) code_addr, code_size, entry);
+
+      if (flush)
+         fflush(file);
+   }
 }
