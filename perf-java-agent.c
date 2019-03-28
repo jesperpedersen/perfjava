@@ -82,6 +82,7 @@ write_unfolded_entry(jvmtiEnv *jvmti, PCStackInfo *info, jmethodID root_method,
 {
    char inlined_name[BUFFER_SIZE];
    const char *entry_p;
+   int i = 0;
 
    if (unfold)
    {
@@ -89,7 +90,7 @@ write_unfolded_entry(jvmtiEnv *jvmti, PCStackInfo *info, jmethodID root_method,
       full_name[0] = '\0';
 
       const jint first_frame = info->numstackframes - 1;
-      for (int i = first_frame; i >= 0; i--)
+      for (i = first_frame; i >= 0; i--)
       {
          signature_string_f(jvmti, info->methods[i], inlined_name, sizeof(inlined_name), frame_annotation(i != first_frame));
          strncat(full_name, inlined_name, sizeof(full_name) - 1 - strlen(full_name));
